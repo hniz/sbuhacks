@@ -6,6 +6,7 @@ ScreenManagement:
     EnglishScreen:
     ChineseScreen: 
     JapaneseScreen:
+    SummaryScreen:
 
 <MainScreen>:
     name: "main"
@@ -68,12 +69,22 @@ ScreenManagement:
         Button: 
             color:0,1,0,1
             font_size: 25
-            text: "Try reading the sentences in English! We'll give you pointers once you do."
+            text: "Try reading the sentences in English! We'll give you pointers once you do. Click here to start."
             on_release: root.start_reading()
-            size_hint: 0.6, 0.2
+            size_hint: 0.7, 0.2
             pos_hint: {"left":1, "top":1}
             size: 700, 200
             pos: 0, 900
+        Button: 
+            color: 0.1,0.1
+            font_size: 25
+            text: "Summary" 
+            on_release: app.root.current = "otherSummary" 
+            size_hint: 0.2, 0.2
+            pos_hint: {"left": 1, "bottom": 1} 
+            size: 350, 100
+            pos: 0, 0
+        
         BoxLayout: 
             Label:
                 id: label1
@@ -123,6 +134,15 @@ ScreenManagement:
             pos_hint: {"left":1, "top":1}
             size: 700, 200
             pos: 0, 900
+        Button: 
+            color: 0.1,0.1
+            font_size: 25
+            text: "Summary" 
+            on_release: app.root.current = "otherSummary" 
+            size_hint: 0.2, 0.2
+            pos_hint: {"left": 1, "bottom": 1} 
+            size: 350, 100
+            pos: 0, 0
         BoxLayout: 
             Label: 
                 text: "Insert the desired Chinese sentences here. We should have a couple of easy and hard sentences. It's good to have a big variety on these things you know."
@@ -162,7 +182,38 @@ ScreenManagement:
             pos_hint: {"left":1, "top":1}
             size: 700, 200
             pos: 0, 900
+        Button: 
+            color: 0.1,0.1
+            font_size: 25
+            text: "Summary" 
+            on_release: app.root.current = "otherSummary" 
+            size_hint: 0.2, 0.2
+            pos_hint: {"left": 1, "bottom": 1} 
+            size: 350, 100
+            pos: 0, 0
         BoxLayout: 
             Label: 
                 text: "Insert the desired Japanese sentences here. We should have a couple of easy and hard sentences. It's good to have a big variety on these things you know."
                 text_size: (1000, None)
+
+
+<SummaryScreen>:
+    name: "otherSummary" 
+    canvas:
+        Color:
+            rgba: 0.5, 0.5, 0.5, 0.5
+        Rectangle: #woohoo!!!
+            size: self.size
+            pos: self.pos
+    FloatLayout:
+    Painter:
+        id: painter # an id for referring to this widget
+    Button:
+        color:0,1,0,1
+        font_size: 25
+        size_hint: 0.3, 0.2
+        text: "Back Home"
+        on_release: app.root.current = "main"
+        pos_hint: {"right":1, "top":1}
+
+    
