@@ -179,8 +179,78 @@ class ChineseScreen(Screen):
             return finals
 
 class JapaneseScreen(Screen):
-    pass
+    passage_label = StringProperty()
+    help_label = StringProperty()
+    input_label = StringProperty()
+    streamthread = threading.Thread
 
+    def startReading(self):
+        target = self.passage_label
+        output = []
+        self.streamthread = threading.Thread(target=(lambda p, q: q.append(self.startStream())), args=(self, output),
+                                             kwargs={})
+        self.streamthread.start()
+        thr = threading.Thread(target=self.streamListener)
+
+    def streamListener(self):
+        while self.streamthread.is_alive():
+            pass
+
+    def startStream(self):
+        def read(responses, passage, lang):
+            missed = []
+            passage_index = 0
+            transcript_index = 0
+            self.passage_label = str(".\n".join(passage[passage_index:]) + ".")
+            for response in responses:
+                # print(response.results[0])
+                if not response.results:
+                    continue
+                result = response.results[0]
+                if not result.alternatives:
+                    continue
+                if result.stability >= 0.80:
+                    print(result.alternatives[0].transcript[transcript_index:])
+                    transcript = result.alternatives[0].transcript
+                    print(transcript_index)
+                    print(passageCheck(passage[passage_index], transcript[transcript_index:]))
+                    comp_result = passageCheck(passage[passage_index], transcript[transcript_index:])
+                    if not comp_result[1]:
+                        passage_index += 1
+                    else:
+                        passage[passage_index] = "".join(comp_result[1])
+                        fgeneratePronun(comp_result[1][0], lang)
+                        self.help_label = str("Tip: " + " ".join(
+                            fgetWord(comp_result[1][0], lang)))  # call dictionary lookup # call dictionary lookup
+                    self.input_label = result.alternatives[0].transcript[transcript_index:]
+                    transcript_index = len(transcript)
+                    if passage_index < len(passage):
+                        self.passage_label = str(".\n".join(passage[passage_index:]) + ".")
+                if passage_index == len(passage):
+                    self.passage_label = str("")
+                    return missed
+
+        language_code = 'ja-JP'  # a BCP-47 language tag 'zh' 'ja-JP'
+        passage = passages.japanese
+        passageIndex = 0
+        client = speech.SpeechClient()
+        config = types.RecognitionConfig(
+            encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
+            sample_rate_hertz=RATE,
+            language_code=language_code)
+        streaming_config = types.StreamingRecognitionConfig(
+            config=config,
+            interim_results=True)
+
+        with MicrophoneStream(RATE, CHUNK) as stream:
+            audio_generator = stream.generator()
+            requests = (types.StreamingRecognizeRequest(audio_content=content)
+                        for content in audio_generator)
+
+            responses = client.streaming_recognize(streaming_config, requests)
+            # Now, put the transcription responses to use.
+            finals = read(responses, passage, 'ja')
+            return finals
 class SummaryScreen(Screen):
     pass
 

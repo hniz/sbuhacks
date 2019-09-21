@@ -1,6 +1,6 @@
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
 <Label>
-    font_name: "MaShanZheng-Regular.ttf"
+    font_name: "irohamaru-mikami-Regular.ttf"
 
 ScreenManagement:
     transition: FadeTransition()
@@ -75,12 +75,10 @@ ScreenManagement:
         Button:
             color:0,1,0,1
             font_size: 25
-            text: "Try reading the sentences in English! We'll give you pointers once you do. Click here to start."
             on_release: root.startReading()
             color:0,1,1,1
             font_size: 40
             text: "Click here to begin reading in English"
-            on_release: root.start_reading()
             size_hint: 0.7, 0.2
             pos_hint: {"left":1, "top":1}
             size: 700, 200
@@ -202,7 +200,7 @@ ScreenManagement:
             color:0,1,1,1
             font_size: 40
             text: "Click here to begin reading in Japanese"
-            on_release: app.root.current = "otherJapanese"
+            on_release: root.startReading()
             size_hint: 0.7, 0.2
             pos_hint: {"left":1, "top":1}
             size: 700, 200
@@ -219,10 +217,23 @@ ScreenManagement:
             pos: 0, 0
             background_color: (1, 0, 0, 0.4)
         BoxLayout: 
-            Label: 
-                text: "Insert the desired Japanese sentences here. We should have a couple of easy and hard sentences. It's good to have a big variety on these things you know."
+            Label:
+                id: label1
+                text: root.passage_label
                 text_size: (1000, None)
-                color: 0, 0, 0, 1
+        BoxLayout:
+            Label:
+                id: label2
+                text: "Registered words: "
+                size_hint: (0.3, 0.8)
+        BoxLayout:
+            Label:
+                text: root.input_label
+                size_hint: (0.3, 0.75)
+        BoxLayout:
+            Label:
+                text: root.help_label
+                size_hint: (0.3, 0.7)
 
 
 <SummaryScreen>:

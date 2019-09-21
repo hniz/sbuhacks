@@ -2,7 +2,7 @@ from __future__ import division
 
 import re
 import sys
-
+import wave
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
@@ -22,10 +22,12 @@ class MicrophoneStream(object):
 
         # Create a thread-safe buffer of audio data
         self._buff = queue.Queue()
+        self._localbuff = queue.Queue()
         self.closed = True
 
     def __enter__(self):
         self._audio_interface = pyaudio.PyAudio()
+
         self._audio_stream = self._audio_interface.open(
             format=pyaudio.paInt16,
             # The API currently only supports 1-channel (mono) audio
@@ -45,16 +47,40 @@ class MicrophoneStream(object):
     def __exit__(self, type, value, traceback):
         self._audio_stream.stop_stream()
         self._audio_stream.close()
+
         self.closed = True
         # Signal the generator to terminate so that the client's
         # streaming_recognize method will not block the process termination.
         self._buff.put(None)
         self._audio_interface.terminate()
+        self.writeLocalFile()
+
 
     def _fill_buffer(self, in_data, frame_count, time_info, status_flags):
         """Continuously collect data from the audio stream, into the buffer."""
         self._buff.put(in_data)
+        self._localbuff.put(in_data)
         return None, pyaudio.paContinue
+
+
+    def writeLocalFile(self):
+        data = []
+        while True:
+            try:
+                chunk = self._localbuff.get(block=False)
+                if chunk is None:
+                    break
+                data.append(chunk)
+            except queue.Empty:
+                break
+        waveFile = wave.open("user_input.wav", 'wb')
+        waveFile.setnchannels(1)
+        waveFile.setsampwidth(self._audio_interface.get_sample_size(pyaudio.paInt16))
+        waveFile.setframerate(RATE)
+        #print(b''.join(data))
+        waveFile.writeframes(b''.join(data))
+        waveFile.close()
+
 
     def generator(self):
         while not self.closed:
@@ -75,7 +101,6 @@ class MicrophoneStream(object):
                     data.append(chunk)
                 except queue.Empty:
                     break
-
             yield b''.join(data)
 
 
@@ -135,7 +160,7 @@ def listen_print_loop(responses):
 def main():
     # See http://g.co/cloud/speech/docs/languages
     # for a list of supported languages.
-    language_code = 'zh'  # a BCP-47 language tag
+    language_code = 'en-US'  # a BCP-47 language tag
 
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
