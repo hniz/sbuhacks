@@ -13,6 +13,7 @@ from kivy.properties import StringProperty
 import threading
 import passages
 import queue
+from kivy.core.audio import SoundLoader
 import random
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -62,9 +63,14 @@ class EnglishScreen(Screen):
         print("yay")
         self.ids.return_home.disabled = False
         self.ids.summary_button.disabled = False
+        App.get_running_app().lang="en"
         self.ids.return_home.background_color = (0, 1, 1, 0.5)
         self.ids.summary_button.background_color = (1, 0, 0, 0.4)
 
+    def playSound(self):
+        sound = SoundLoader.load("output.mp3")
+        if(sound):
+            sound.play()
 
     def startStream(self):
         def read(responses, passage):
@@ -84,10 +90,12 @@ class EnglishScreen(Screen):
                     missed += comp_result[0]
                     if not comp_result[1]:
                         passage_index += 1
+                        self.ids.repeat_button.disabled = True
                     else:
                         passage[passage_index] = " ".join(comp_result[1])
                         generatePronun(comp_result[1][0])
-                        missed += comp_result[1][0]
+                        self.ids.repeat_button.disabled = False
+                        missed += [comp_result[1][0]]
                         self.help_label = str("Tip: "+ " ".join(getWord(comp_result[1][0]))) # call dictionary lookup
                     self.input_label = result.alternatives[0].transcript
                     if passage_index<len(passage):
@@ -138,8 +146,14 @@ class ChineseScreen(Screen):
         self.streamthread.join()
         self.ids.summary_button.disabled = False
         self.ids.return_home.disabled = False
+        App.get_running_app().lang="zh"
         self.ids.return_home.background_color = (0, 1, 1, 1)
         self.ids.summary_button.background_color = (1, 0, 0, 0.4)
+
+    def playSound(self):
+        sound = SoundLoader.load("output.mp3")
+        if(sound):
+            sound.play()
 
     def startStream(self):
         def read(responses, passage, lang):
@@ -147,7 +161,7 @@ class ChineseScreen(Screen):
             passage_index = 0
             transcript_index = 0
             self.passage_label1 = str(".\n".join(passage[passage_index:])+".")
-            print(self.passage_label)
+            #print(self.passage_label)
             for response in responses:
                 # print(response.results[0])
                 if not response.results:
@@ -163,9 +177,12 @@ class ChineseScreen(Screen):
                     comp_result = passageCheck(passage[passage_index], transcript[transcript_index:])
                     if not comp_result[1]:
                         passage_index += 1
+                        self.ids.repeat_button.disabled = True
                     else:
                         passage[passage_index] = "".join(comp_result[1])
                         fgeneratePronun(comp_result[1][0], lang)
+                        self.ids.repeat_button.disabled = False
+                        missed += [comp_result[1][0]]
                         self.help_label = str("Tip: "+ " ".join(fgetWord(comp_result[1][0], lang))) # call dictionary lookup # call dictionary lookup
                     self.input_label = result.alternatives[0].transcript[transcript_index:]
                     transcript_index = len(transcript)
@@ -213,8 +230,14 @@ class JapaneseScreen(Screen):
         thr = threading.Thread(target=self.streamListener)
         thr.start()
 
+    def playSound(self):
+        sound = SoundLoader.load("output.mp3")
+        if(sound):
+            sound.play()
+
     def streamListener(self):
         self.streamthread.join()
+        App.get_running_app().lang="ja"
         self.ids.return_home.disabled = False
         self.ids.summary_button.disabled = False
         self.ids.return_home.background_color = (0, 1, 1, 1)
@@ -243,9 +266,12 @@ class JapaneseScreen(Screen):
                     comp_result = passageCheck(passage[passage_index], transcript[transcript_index:])
                     if not comp_result[1]:
                         passage_index += 1
+                        self.ids.repeat_button.disabled = True
                     else:
                         passage[passage_index] = "".join(comp_result[1])
                         fgeneratePronun(comp_result[1][0], lang)
+                        missed += [comp_result[1][0]]
+                        self.ids.repeat_button.disabled = False
                         self.help_label = str("Tip: " + " ".join(
                             fgetWord(comp_result[1][0], lang)))  # call dictionary lookup # call dictionary lookup
                     self.input_label = result.alternatives[0].transcript[transcript_index:]
@@ -281,6 +307,11 @@ class JapaneseScreen(Screen):
 
 class SummaryScreen(Screen):
     def build(self):
+        lang = App.get_running_app().lang
+        if(lang == 'zh'):
+            self.ids.label2.font_name = "simkai.ttf"
+        elif(lang == "ja"):
+            self.ids.label2.font_name = "irohamaru-mikami-Regular.ttf"
         s = "Missed words: " + ", ".join(App.get_running_app().missed_keys)
         self.ids.label2.text = str(s)
         values = mysptotal("user_input", "sbuhacks-2/myprosody-master/myprosody")
@@ -294,9 +325,9 @@ class SummaryScreen(Screen):
         averages = [13,1,0.65,2,17,30,0.55]
         num = random.randint(0,len(averages)-1)
         if float(values[0][num]) > averages[num]:
-            self.ids.label3.text = str("Your "+labels[num][:-2]+ " is higher than the average of "+str(averages[num])+".")
+            self.ids.label3.text = str("Your "+labels[num][:-2].lower()+ " is higher than the average of "+str(averages[num])+".")
         else:
-            self.ids.label3.text = str("Your "+labels[num][:-2]+ " is lower than the average of "+str(averages[num])+".")
+            self.ids.label3.text = str("Your "+labels[num][:-2].lower()+ " is lower than the average of "+str(averages[num])+".")
 
 
 
@@ -307,11 +338,12 @@ class ScreenManagement(ScreenManager):
 with open("floating.kv", encoding="utf-8") as f:
     presentation = Builder.load_string(f.read()) #load the kivy file
 
-class SimpleKivy7(App):
+class echo(App):
     missed_keys = []
+    lang = ""
     def build(self):
         return presentation
 
 if __name__== "__main__":
-    SimpleKivy7().run()
+    echo().run()
 

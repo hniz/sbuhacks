@@ -82,7 +82,7 @@ def read(responses, passage, lang):
         result = response.results[0]
         if not result.alternatives:
             continue
-        if result.stability >= 0.80:
+        if result.stability >= 0.70:
             print(result.alternatives[0].transcript[transcript_index:])
             transcript = result.alternatives[0].transcript
             print(transcript_index)

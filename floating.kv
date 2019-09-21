@@ -21,12 +21,13 @@ ScreenManagement:
             pos: self.pos
     Button: 
         on_release: app.root.current = "main" 
-        text: "langBuddy"
+        text: "echo"
         font_size: 100
         size: 1700, 300
         size_hint: None, None
-        pos: 0, 900
+        pos: -50, 900
         background_color: (0, 1, 1, 1)
+        font_name: "MaShanZheng-Regular.ttf"
     Button:
         on_release: app.root.current = "otherEnglish"
         text: "Practice English"
@@ -48,9 +49,9 @@ ScreenManagement:
         on_release: app.root.current = "otherJapanese"
         text: "Practice Japanese(日本語)"
         font_size: 50
-        size: 600, 300 
+        size: 700, 300 
         size_hint: None, None
-        pos: 500, 70
+        pos: 450, 70
         background_color: (1, 0, 0, 0.4)
         font_name: "irohamaru-mikami-Regular.ttf"
 
@@ -100,7 +101,18 @@ ScreenManagement:
             size: 350, 100
             pos: 0, 0
             background_color: (1, 0, 0, 0.2)
-        
+        Button: 
+            color: 0,1,1,1
+            font_size: 25
+            text: "Repeat"
+            disabled: True
+            id: repeat_button
+            on_release: root.playSound()
+            size_hint: 0.1, 0.1
+            pos_hint: {"right": 1, "bottom": 1} 
+            size: 350, 100
+            pos: 0, 0
+            background_color: (1, 0, 0, 0.2)
         BoxLayout: 
             Label:
                 text: root.passage_label
@@ -146,7 +158,6 @@ ScreenManagement:
             pos_hint: {"right":1, "top":1}
             background_color: (0, 1, 1, 1)
         Button: 
-
             color:0,1,1,1
             font_size: 40
             text: "Click here to begin reading in Chinese"
@@ -156,6 +167,7 @@ ScreenManagement:
             size: 700, 200
             pos: 0, 900
             background_color: (0, 1, 1, 1)
+        
         Button: 
             color:0,1,1,1
             font_size: 25
@@ -167,10 +179,23 @@ ScreenManagement:
             size: 350, 100
             pos: 0, 0
             background_color: (1, 0, 0, 0.2)
+        Button: 
+            color: 0,1,1,1
+            font_size: 25
+            text: "Repeat"
+            disabled: True
+            id: repeat_button
+            on_release: root.playSound()
+            size_hint: 0.1, 0.1
+            pos_hint: {"right": 1, "bottom": 1} 
+            size: 350, 100
+            pos: 0, 0
+            background_color: (1, 0, 0, 0.2)
         BoxLayout: 
             Label:
                 text: root.passage_label1
                 text_size: (1000, None)
+                font_size: 60
                 color: 0, 0, 0, 1
                 font_name: "simkai.ttf"
         BoxLayout:
@@ -234,6 +259,18 @@ ScreenManagement:
             pos: 0, 0
             background_color: (1, 0, 0, 0.2)
             #disabled: True
+        Button: 
+            color: 0,1,1,1
+            font_size: 25
+            text: "Repeat"
+            disabled: True
+            id: repeat_button
+            on_release: root.playSound()
+            size_hint: 0.1, 0.1
+            pos_hint: {"right": 1, "bottom": 1} 
+            size: 350, 100
+            pos: 0, 0
+            background_color: (1, 0, 0, 0.2)
         BoxLayout: 
             Label:
                 id: label1
@@ -259,7 +296,6 @@ ScreenManagement:
                 size_hint: (0.3, 0.7)
                 color: 0, 0, 0, 1
                 font_name: "irohamaru-mikami-Regular.ttf"
-
 
 <SummaryScreen>:
     name: "otherSummary"
@@ -289,19 +325,21 @@ ScreenManagement:
         BoxLayout:
             Label:
                 id: label1
-                text: "We are going to put the statistics here buddy"
-                size_hint: (0.3, 0.8)
+                text: ""
+                size_hint: (0.01, 0.5)
                 color: 0,0,0,1
                 text_size: (1000, None)
         BoxLayout:
             Label:
                 id: label2
-                text: "Missed words over here"
+                text: ""
+                size_hint: (0.01, 0.1)
                 color: 0,0,0,1
                 text_size: (1500, None)
         BoxLayout:
             Label:
                 id: label3
-                text: "Sentence analysis of their results over here."
+                text: ""
+                size_hint: (0.9, 0.9)
                 text_size: (1500, None)
                 color: 0,0,0,1
