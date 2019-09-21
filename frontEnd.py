@@ -40,19 +40,18 @@ class MainScreen(Screen):
 
 class EnglishScreen(Screen):
     passage_label = StringProperty()
+    input_label = StringProperty()
     def start_reading(self):
         target = self.passage_label
         output = []
-        thr = threading.Thread(target=self.startStream)
+        thr = threading.Thread(target=(lambda p, q: q.append(self.startStream())), args=(self, output), kwargs={})
         thr.start()
-        #thr.join()
-        print(output)
 
     def startStream(self):
         def read(responses, passage):
             missed = []
             passage_index = 0
-            self.passage_label = str(passage[passage_index])
+            self.passage_label = str(".\n".join(passage[passage_index:])+".")
             for response in responses:
                 if not response.results:
                     continue
@@ -71,9 +70,11 @@ class EnglishScreen(Screen):
                         generatePronun(comp_result[1][0])
                         missed += comp_result[1][0]
                         print(getWord(comp_result[1][0]))  # call dictionary lookup
+                    self.input_label = result.alternatives[0].transcript
                     if passage_index<len(passage):
-                        self.passage_label = str(passage[passage_index])
+                        self.passage_label = str(".\n".join(passage[passage_index:]) + ".")
                 if passage_index == len(passage):
+                    self.passage_label = str("")
                     return missed
         language_code = 'en-US'  # a BCP-47 language tag
         client = speech.SpeechClient()
