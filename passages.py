@@ -1,7 +1,8 @@
 english = [
-    "this is the test english passage",
-    "we will use this in order to fix any errors in the program",
-    "each sentence is separated in the array"
+    "the quick brown fox jumped over the lazy dog",
+    "machine learning and artificial intelligence are exciting",
+    "stony brook university holds a great hackathon",
+    "come to the hackathon at stevens institute of technology in february"
 ]
 
 chinese = [
@@ -11,7 +12,7 @@ chinese = [
 ]
 
 japanese = [
-    "帰りたい",
+    "私は帰りたい",
     "でも仕事がある",
-    "眠りたい"
+    "眠りたいです"
 ]

@@ -159,5 +159,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print(passageCheck("我觉得你的妈很丑","你妈很丑"))
 
 #print(getWord("english"))

@@ -45,16 +45,22 @@ class EnglishScreen(Screen):
     help_label = StringProperty()
     streamthread = threading.Thread
     def startReading(self):
-        target = self.passage_label
         output = []
         self.streamthread = threading.Thread(target=(lambda p, q: q.append(self.startStream())), args=(self, output), kwargs={})
         self.streamthread.start()
+        self.ids.return_home.disabled = True
+        self.ids.return_home.background_color = (0, 1, 1, 1)
         thr = threading.Thread(target=self.streamListener)
+        thr.start()
+
 
     def streamListener(self):
-        while self.streamthread.is_alive():
-            pass
-
+        self.streamthread.join()
+        print("yay")
+        self.ids.return_home.disabled = False
+        self.ids.summary_button.disabled = False
+        self.ids.return_home.background_color = (0, 1, 1, 0.5)
+        self.ids.summary_button.background_color = (1, 0, 0, 0.4)
 
 
     def startStream(self):
@@ -85,6 +91,7 @@ class EnglishScreen(Screen):
                         self.passage_label = str(".\n".join(passage[passage_index:]) + ".")
                 if passage_index == len(passage):
                     self.passage_label = str("")
+                    print("woo")
                     return missed
         language_code = 'en-US'  # a BCP-47 language tag
         client = speech.SpeechClient()
@@ -104,32 +111,40 @@ class EnglishScreen(Screen):
             responses = client.streaming_recognize(streaming_config, requests)
             # Now, put the transcription responses to use.
             finals = read(responses, passages.english)
-            return (finals)
+            App.get_running_app().missed_keys = finals
+            print("yippee")
+            return finals
 
 
 class ChineseScreen(Screen):
-    passage_label = StringProperty()
+    passage_label1 = StringProperty()
     help_label = StringProperty()
     input_label = StringProperty()
     streamthread = threading.Thread
     def startReading(self):
-        target = self.passage_label
         output = []
         self.streamthread = threading.Thread(target=(lambda p, q: q.append(self.startStream())), args=(self, output),
                                              kwargs={})
+        self.ids.return_home.disabled = True
+        self.ids.return_home.background_color = (0, 1, 1, 0.5)
         self.streamthread.start()
         thr = threading.Thread(target=self.streamListener)
+        thr.start()
 
     def streamListener(self):
-        while self.streamthread.is_alive():
-            pass
+        self.streamthread.join()
+        self.ids.summary_button.disabled = False
+        self.ids.return_home.disabled = False
+        self.ids.return_home.background_color = (0, 1, 1, 1)
+        self.ids.summary_button.background_color = (1, 0, 0, 0.4)
 
     def startStream(self):
         def read(responses, passage, lang):
             missed = []
             passage_index = 0
             transcript_index = 0
-            self.passage_label = str(".\n".join(passage[passage_index:])+".")
+            self.passage_label1 = str(".\n".join(passage[passage_index:])+".")
+            print(self.passage_label)
             for response in responses:
                 # print(response.results[0])
                 if not response.results:
@@ -152,13 +167,12 @@ class ChineseScreen(Screen):
                     self.input_label = result.alternatives[0].transcript[transcript_index:]
                     transcript_index = len(transcript)
                     if passage_index<len(passage):
-                        self.passage_label = str(".\n".join(passage[passage_index:]) + ".")
+                        self.passage_label1 = str(".\n".join(passage[passage_index:]) + ".")
                 if passage_index == len(passage):
-                    self.passage_label = str("")
+                    self.passage_label1 = str("")
                     return missed
         language_code = 'zh'  # a BCP-47 language tag 'zh' 'ja-JP'
         passage = passages.chinese
-        passageIndex = 0
         client = speech.SpeechClient()
         config = types.RecognitionConfig(
             encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
@@ -176,6 +190,7 @@ class ChineseScreen(Screen):
             responses = client.streaming_recognize(streaming_config, requests)
             # Now, put the transcription responses to use.
             finals = read(responses, passage, 'zh')
+            App.get_running_app().missed_keys = finals
             return finals
 
 class JapaneseScreen(Screen):
@@ -189,12 +204,20 @@ class JapaneseScreen(Screen):
         output = []
         self.streamthread = threading.Thread(target=(lambda p, q: q.append(self.startStream())), args=(self, output),
                                              kwargs={})
+        self.ids.return_home.disabled = True
+        self.ids.return_home.background_color = (0,1,1,0.5)
         self.streamthread.start()
         thr = threading.Thread(target=self.streamListener)
+        thr.start()
 
     def streamListener(self):
-        while self.streamthread.is_alive():
-            pass
+        self.streamthread.join()
+        self.ids.return_home.disabled = False
+        self.ids.summary_button.disabled = False
+        self.ids.return_home.background_color = (0, 1, 1, 1)
+        self.ids.summary_button.background_color = (1,0,0,0.4)
+
+
 
     def startStream(self):
         def read(responses, passage, lang):
@@ -250,7 +273,9 @@ class JapaneseScreen(Screen):
             responses = client.streaming_recognize(streaming_config, requests)
             # Now, put the transcription responses to use.
             finals = read(responses, passage, 'ja')
+            App.get_running_app().missed_keys = finals
             return finals
+
 class SummaryScreen(Screen):
     pass
 
@@ -261,6 +286,7 @@ with open("floating.kv", encoding="utf-8") as f:
     presentation = Builder.load_string(f.read()) #load the kivy file
 
 class SimpleKivy7(App):
+    missed_keys = []
     def build(self):
         return presentation
 
