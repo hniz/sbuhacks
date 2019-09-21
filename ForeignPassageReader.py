@@ -22,12 +22,22 @@ dictapikey={
     'zh':""
 }
 dictresponse = {
-    'zh': ['pinyin']
+    'zh': ['pinyin'],
+    'ja':['converted']
 }
 
 
 def getWord(word: str, lang: str):
-    response = requests.get(dictapi[lang] + word + dictapikey['zh'])
+    if lang == 'zh':
+        response = requests.get(dictapi[lang] + word + dictapikey['zh'])
+    elif lang == 'ja':
+        response = requests.post("https://labs.goo.ne.jp/api/hiragana", data=
+                                {"app_id":"4e3997ff901be0db2085920c2248ebf198cc5029eb5fad60393aedfa892cd5ca",
+                                 "sentence": word,
+                                 "output_type":"hiragana"
+                                 })
+    else:
+        response = None
     entry = response.json()
     result = []
     for value in dictresponse[lang]:
@@ -64,6 +74,7 @@ def generatePronun(word, lang):
 
 def read(responses, passage, lang):
     passage_index = 0
+    transcript_index = 0
     for response in responses:
         #print(response.results[0])
         if not response.results:
@@ -71,16 +82,20 @@ def read(responses, passage, lang):
         result = response.results[0]
         if not result.alternatives:
             continue
-        if result.stability>=0.80:
-            print(result.alternatives[0].transcript)
-            print(passageCheck(passage[passage_index], result.alternatives[0].transcript))
-            comp_result = passageCheck(passage[passage_index], result.alternatives[0].transcript)
+        if result.stability >= 0.80:
+            print(result.alternatives[0].transcript[transcript_index:])
+            transcript = result.alternatives[0].transcript
+            print(transcript_index)
+            print(passageCheck(passage[passage_index], transcript[transcript_index:]))
+            comp_result = passageCheck(passage[passage_index], transcript[transcript_index:])
             if not comp_result[1]:
                 passage_index += 1
             else:
                 passage[passage_index] = "".join(comp_result[1])
                 generatePronun(comp_result[1][0], lang)
                 print(getWord(comp_result[1][0], lang))  # call dictionary lookup
+            transcript_index = len(transcript)
+
         if passage_index == len(passage):
             break
 
@@ -111,16 +126,16 @@ def passageCheck(passage: str, response: str):
         passagewords = passage.split(" ")
         responsewords = response.split(" ")
     else:
-        passagewords = passage
-        responsewords = response
+        passagewords = list(passage)
+        responsewords = list(response)
     return match(passagewords, responsewords)
 
 
 def main():
     # See http://g.co/cloud/speech/docs/languages
     # for a list of supported languages.
-    language_code = 'ja-JP'  # a BCP-47 language tag
-    passage = passages.japanese
+    language_code = 'zh'  # a BCP-47 language tag 'zh' 'ja-JP'
+    passage = passages.chinese
     passageIndex = 0
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
@@ -138,7 +153,7 @@ def main():
 
         responses = client.streaming_recognize(streaming_config, requests)
         # Now, put the transcription responses to use.
-        finals = read(responses, passage, 'ja')
+        finals = read(responses, passage, 'zh')
         #print(passageCheck(passage[passageIndex], finals))
 
 
