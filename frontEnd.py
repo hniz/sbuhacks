@@ -41,11 +41,20 @@ class MainScreen(Screen):
 class EnglishScreen(Screen):
     passage_label = StringProperty()
     input_label = StringProperty()
+    help_label = StringProperty()
+    streamthread = threading.Thread
     def start_reading(self):
         target = self.passage_label
         output = []
-        thr = threading.Thread(target=(lambda p, q: q.append(self.startStream())), args=(self, output), kwargs={})
-        thr.start()
+        self.streamthread = threading.Thread(target=(lambda p, q: q.append(self.startStream())), args=(self, output), kwargs={})
+        self.streamthread.start()
+        thr = threading.Thread(target=self.streamListener)
+
+    def streamListener(self):
+        while self.streamthread.is_alive():
+            pass
+
+
 
     def startStream(self):
         def read(responses, passage):
@@ -69,7 +78,7 @@ class EnglishScreen(Screen):
                         passage[passage_index] = " ".join(comp_result[1])
                         generatePronun(comp_result[1][0])
                         missed += comp_result[1][0]
-                        print(getWord(comp_result[1][0]))  # call dictionary lookup
+                        self.help_label = str("Tip: "+ " ".join(getWord(comp_result[1][0]))) # call dictionary lookup
                     self.input_label = result.alternatives[0].transcript
                     if passage_index<len(passage):
                         self.passage_label = str(".\n".join(passage[passage_index:]) + ".")

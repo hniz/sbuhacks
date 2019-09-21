@@ -65,12 +65,13 @@ def generatePronun(word, lang):
 def read(responses, passage, lang):
     passage_index = 0
     for response in responses:
+        #print(response.results[0])
         if not response.results:
             continue
         result = response.results[0]
         if not result.alternatives:
             continue
-        if result.is_final:
+        if result.stability>=0.80:
             print(result.alternatives[0].transcript)
             print(passageCheck(passage[passage_index], result.alternatives[0].transcript))
             comp_result = passageCheck(passage[passage_index], result.alternatives[0].transcript)
@@ -118,8 +119,8 @@ def passageCheck(passage: str, response: str):
 def main():
     # See http://g.co/cloud/speech/docs/languages
     # for a list of supported languages.
-    language_code = 'zh'  # a BCP-47 language tag
-    passage = passages.chinese
+    language_code = 'ja-JP'  # a BCP-47 language tag
+    passage = passages.japanese
     passageIndex = 0
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
@@ -137,12 +138,11 @@ def main():
 
         responses = client.streaming_recognize(streaming_config, requests)
         # Now, put the transcription responses to use.
-        finals = read(responses, passage)
+        finals = read(responses, passage, 'ja')
         #print(passageCheck(passage[passageIndex], finals))
 
 
 if __name__ == '__main__':
-    print(getWord("如", 'zh'))
-
+    main()
 
 #print(getWord("english"))

@@ -18,7 +18,11 @@ dictapikey = "?key=c0fe89c9-9bf3-4284-8b11-ce96e1f69054"
 def getWord(word: str):
     response = requests.get(dictapi + word + dictapikey)
     entry = response.json()
-    return [entry[0]['hwi']['hw'], entry[0]['hwi']['prs'][0]['mw']]
+    try:
+        result = [entry[0]['hwi']['hw'], entry[0]['hwi']['prs'][0]['mw']]
+    except KeyError:
+        return ""
+    return result
 
 def generatePronun(word):
     # Instantiates a client
