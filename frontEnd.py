@@ -1,5 +1,7 @@
 from __future__ import division
-
+import sys
+sys.path.insert(1, "sbuhacks-2/myprosody-master")
+from myprosody import mysptotal
 from random import random
 from kivy.app import App
 from kivy.lang import Builder
@@ -11,6 +13,7 @@ from kivy.properties import StringProperty
 import threading
 import passages
 import queue
+import random
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
@@ -277,7 +280,26 @@ class JapaneseScreen(Screen):
             return finals
 
 class SummaryScreen(Screen):
-    pass
+    def build(self):
+        s = "Missed words: " + ", ".join(App.get_running_app().missed_keys)
+        self.ids.label2.text = str(s)
+        values = mysptotal("user_input", "sbuhacks-2/myprosody-master/myprosody")
+        labels = ["Number of syllables: ","Number of pauses: ", "Average rate of speech: ",
+         "Articulation rate: ", "Speaking duration: ","Original duration: ","Average balance: ",
+         "Average Frequency: "]
+        s = ""
+        for x in range(len(labels)):
+            s += labels[x] + values[0][x] + "\n"
+        self.ids.label1.text = str(s)
+        averages = [13,1,0.65,2,17,30,0.55]
+        num = random.randint(0,len(averages)-1)
+        if float(values[0][num]) > averages[num]:
+            self.ids.label3.text = str("Your "+labels[num][:-2]+ " is higher than the average of "+str(averages[num])+".")
+        else:
+            self.ids.label3.text = str("Your "+labels[num][:-2]+ " is lower than the average of "+str(averages[num])+".")
+
+
+
 
 class ScreenManagement(ScreenManager):
     pass

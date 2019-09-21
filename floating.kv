@@ -1,5 +1,7 @@
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
 
+<Label>:
+    font_name:"NotoSansDisplay-Regular.ttf"
 
 ScreenManagement:
     transition: FadeTransition()
@@ -231,7 +233,7 @@ ScreenManagement:
             size: 350, 100
             pos: 0, 0
             background_color: (1, 0, 0, 0.2)
-            disabled: True
+            #disabled: True
         BoxLayout: 
             Label:
                 id: label1
@@ -259,9 +261,8 @@ ScreenManagement:
                 font_name: "irohamaru-mikami-Regular.ttf"
 
 
-
 <SummaryScreen>:
-    name: "otherSummary" 
+    name: "otherSummary"
     canvas:
         Color:
             rgba: 1, 1, 1, 1
@@ -269,14 +270,38 @@ ScreenManagement:
             size: self.size
             pos: self.pos
     FloatLayout:
-    Painter:
-        id: painter # an id for referring to this widget
-    Button:
-        color:0,1,0,1
-        font_size: 25
-        size_hint: 0.3, 0.2
-        text: "Back Home"
-        on_release: app.root.current = "main"
-        pos_hint: {"right":1, "top":1}
-
-    
+        Painter:
+            id: painter # an id for referring to this widget
+        Button:
+            color:0,1,0,1
+            font_size: 25
+            size_hint: 0.3, 0.2
+            text: "Back Home"
+            on_release: app.root.current = "main"
+            pos_hint: {"right":1, "top":1}
+        Button:
+            color:0,1,0,1
+            font_size: 25
+            size_hint: 0.3, 0.2
+            text: "Get Statistics"
+            on_release: root.build()
+            pos_hint: {"right":1, "bottom":1}
+        BoxLayout:
+            Label:
+                id: label1
+                text: "We are going to put the statistics here buddy"
+                size_hint: (0.3, 0.8)
+                color: 0,0,0,1
+                text_size: (1000, None)
+        BoxLayout:
+            Label:
+                id: label2
+                text: "Missed words over here"
+                color: 0,0,0,1
+                text_size: (1500, None)
+        BoxLayout:
+            Label:
+                id: label3
+                text: "Sentence analysis of their results over here."
+                text_size: (1500, None)
+                color: 0,0,0,1

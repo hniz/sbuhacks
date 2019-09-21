@@ -2,7 +2,7 @@ File type = "ooTextFile"
 Object class = "TextGrid"
 
 xmin = 0 
-xmax = 6.3 
+xmax = 15.2 
 tiers? <exists> 
 size = 2 
 item []: 
@@ -10,50 +10,104 @@ item []:
         class = "TextTier" 
         name = "syllables" 
         xmin = 0 
-        xmax = 6.3 
-        points: size = 5 
+        xmax = 15.2 
+        points: size = 19 
         points [1]:
-            number = 1.8766902053956338 
+            number = 2.2937782398546256 
             mark = "1" 
         points [2]:
-            number = 1.9889417984548172 
+            number = 2.573781503313452 
             mark = "2" 
         points [3]:
-            number = 2.0900019894683664 
+            number = 2.6921300233334233 
             mark = "3" 
         points [4]:
-            number = 2.1892760759968737 
+            number = 2.904048430249715 
             mark = "4" 
         points [5]:
-            number = 2.3333346918726896 
+            number = 2.997629799984259 
             mark = "5" 
+        points [6]:
+            number = 3.208101513424799 
+            mark = "6" 
+        points [7]:
+            number = 6.401008860725144 
+            mark = "7" 
+        points [8]:
+            number = 6.543816484055084 
+            mark = "8" 
+        points [9]:
+            number = 6.6878216984056715 
+            mark = "9" 
+        points [10]:
+            number = 6.893603381834544 
+            mark = "10" 
+        points [11]:
+            number = 7.035467359394875 
+            mark = "11" 
+        points [12]:
+            number = 7.2455591502092895 
+            mark = "12" 
+        points [13]:
+            number = 7.544449418580076 
+            mark = "13" 
+        points [14]:
+            number = 10.300777358477792 
+            mark = "14" 
+        points [15]:
+            number = 10.478014520198379 
+            mark = "15" 
+        points [16]:
+            number = 10.770631536836666 
+            mark = "16" 
+        points [17]:
+            number = 13.388321528514767 
+            mark = "17" 
+        points [18]:
+            number = 13.57848692754056 
+            mark = "18" 
+        points [19]:
+            number = 13.782351023236611 
+            mark = "19" 
     item [2]:
         class = "IntervalTier" 
         name = "silences" 
         xmin = 0 
-        xmax = 6.3 
-        intervals: size = 6 
+        xmax = 15.2 
+        intervals: size = 9 
         intervals [1]:
             xmin = 0 
-            xmax = 0.11799999999999984 
-            text = "sounding" 
+            xmax = 2.192 
+            text = "silent" 
         intervals [2]:
-            xmin = 0.11799999999999984 
-            xmax = 1.718 
-            text = "silent" 
+            xmin = 2.192 
+            xmax = 3.3760000000000003 
+            text = "sounding" 
         intervals [3]:
-            xmin = 1.718 
-            xmax = 2.854 
-            text = "sounding" 
-        intervals [4]:
-            xmin = 2.854 
-            xmax = 4.821999999999999 
+            xmin = 3.3760000000000003 
+            xmax = 6.288 
             text = "silent" 
-        intervals [5]:
-            xmin = 4.821999999999999 
-            xmax = 5.045999999999999 
+        intervals [4]:
+            xmin = 6.288 
+            xmax = 7.776 
             text = "sounding" 
+        intervals [5]:
+            xmin = 7.776 
+            xmax = 10.16 
+            text = "silent" 
         intervals [6]:
-            xmin = 5.045999999999999 
-            xmax = 6.3 
+            xmin = 10.16 
+            xmax = 10.976 
+            text = "sounding" 
+        intervals [7]:
+            xmin = 10.976 
+            xmax = 13.296000000000001 
+            text = "silent" 
+        intervals [8]:
+            xmin = 13.296000000000001 
+            xmax = 14 
+            text = "sounding" 
+        intervals [9]:
+            xmin = 14 
+            xmax = 15.2 
             text = "silent" 

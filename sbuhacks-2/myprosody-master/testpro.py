@@ -2,7 +2,7 @@ import myprosody as mysp
 import pickle
 
 p="user_input" 
-c=r"/Users/HNizami/Desktop/SBUHack/myprosody-master/myprosody"
+c=r"myprosody"
 
 
 mysp.mysptotal(p,c)

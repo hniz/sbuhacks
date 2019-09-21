@@ -20,7 +20,7 @@ def getWord(word: str):
     entry = response.json()
     try:
         result = [entry[0]['hwi']['hw'], entry[0]['hwi']['prs'][0]['mw']]
-    except KeyError:
+    except KeyError or TypeError:
         return ""
     return result
 

@@ -73,7 +73,7 @@ class MicrophoneStream(object):
                 data.append(chunk)
             except queue.Empty:
                 break
-        waveFile = wave.open("user_input.wav", 'wb')
+        waveFile = wave.open("sbuhacks-2/myprosody-master/myprosody/dataset/audiofiles/user_input.wav", 'wb')
         waveFile.setnchannels(1)
         waveFile.setsampwidth(self._audio_interface.get_sample_size(pyaudio.paInt16))
         waveFile.setframerate(RATE)
