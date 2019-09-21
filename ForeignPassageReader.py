@@ -11,7 +11,6 @@ import pyaudio
 from six.moves import queue
 from googlestreaming import MicrophoneStream
 import requests
-import json
 
 # Audio recording parameters
 RATE = 16000
@@ -80,7 +79,7 @@ def read(responses, passage, lang):
             else:
                 passage[passage_index] = "".join(comp_result[1])
                 generatePronun(comp_result[1][0], lang)
-                print(getWord(comp_result[1][0], lang)) #call dictionary lookup
+                print(getWord(comp_result[1][0], lang))  # call dictionary lookup
         if passage_index == len(passage):
             break
 

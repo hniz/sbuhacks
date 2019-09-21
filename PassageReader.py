@@ -1,17 +1,12 @@
 from __future__ import division
 
-import re
-import sys
 import passages
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 from google.cloud import texttospeech
-import pyaudio
-from six.moves import queue
 from googlestreaming import MicrophoneStream
 import requests
-import json
 
 # Audio recording parameters
 RATE = 16000
@@ -54,6 +49,7 @@ def generatePronun(word):
 
 
 def read(responses, passage):
+    missed = []
     passage_index = 0
     for response in responses:
         if not response.results:
@@ -65,12 +61,16 @@ def read(responses, passage):
             print(result.alternatives[0].transcript)
             print(passageCheck(passage[passage_index], result.alternatives[0].transcript))
             comp_result = passageCheck(passage[passage_index], result.alternatives[0].transcript)
+            missed += comp_result[0]
             if not comp_result[1]:
                 passage_index += 1
             else:
                 passage[passage_index] = " ".join(comp_result[1])
                 generatePronun(comp_result[1][0])
+                missed += comp_result[1][0]
                 print(getWord(comp_result[1][0])) #call dictionary lookup
+        if passage_index == len(passage):
+            return missed
 
 
 def match(passagewords, responsewords):
@@ -97,12 +97,10 @@ def passageCheck(passage: str, response: str):
     return match(passagewords, responsewords)
 
 
-def main():
+def initializeStream(passage:str):
     # See http://g.co/cloud/speech/docs/languages
     # for a list of supported languages.
     language_code = 'en-US'  # a BCP-47 language tag
-    passage = passages.english
-    passageIndex = 0
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
@@ -120,11 +118,13 @@ def main():
         responses = client.streaming_recognize(streaming_config, requests)
         # Now, put the transcription responses to use.
         finals = read(responses, passage)
-        #print(passageCheck(passage[passageIndex], finals))
+        return (finals)
 
+def main():
+    missed = initializeStream(passages.english)
+    print(missed)
 
 if __name__ == '__main__':
-    generatePronun("  english  ")
-
+    main()
 
 #print(getWord("english"))
